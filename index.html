@@ -26,7 +26,7 @@
   --gray-dim: #5a5a5a;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   font-family: 'Montserrat', sans-serif;
   background: var(--bg);
@@ -35,6 +35,8 @@ body {
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
 }
 nav#navbar { order: 1; }
 section.hero { order: 2; }

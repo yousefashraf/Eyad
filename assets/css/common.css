@@ -14,12 +14,14 @@
   --gray-dim: #5a5a5a;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   font-family: 'Montserrat', sans-serif;
   background: var(--bg);
   color: var(--cream);
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+  max-width: 100%;
 }
 
 ::-webkit-scrollbar { width: 5px; }
