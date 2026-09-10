@@ -164,6 +164,45 @@ body {
   position: relative; z-index: 1; display: inline-block; max-width: 86%; line-height: 1.45;
   font-weight: 700; color: #1f1d1c; letter-spacing: 1.7px; text-shadow: 0 1px 0 rgba(255,255,255,0.18);
 }
+
+/* PDF Cover Cards */
+.sneak-peek.pdf-covers {
+  grid-template-columns: repeat(2, 1fr); gap: 16px;
+}
+.pdf-cover-card {
+  position: relative; display: block; width: 100%; aspect-ratio: 0.7 / 1;
+  border-radius: 4px; overflow: hidden; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3); transition: all 0.4s ease;
+  text-decoration: none;
+}
+.pdf-cover-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(201, 168, 76, 0.25);
+}
+.pdf-cover-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.4s ease;
+}
+.pdf-cover-card:hover .pdf-cover-img {
+  transform: scale(1.05);
+}
+.pdf-cover-overlay {
+  position: absolute; inset: 0; background: rgba(10, 10, 10, 0.8); 
+  backdrop-filter: blur(4px); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.pdf-cover-card:hover .pdf-cover-overlay {
+  opacity: 1;
+}
+.pdf-cover-overlay svg {
+  color: var(--gold); width: 40px; height: 40px;
+}
+.pdf-cover-overlay span {
+  font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+}
+
 /* Lightbox */
 .lightbox {
   display: none; position: fixed; inset: 0; z-index: 9999;
@@ -1013,13 +1052,29 @@ body.about-page #about, body.about-page #certificates { display: none; }
             <path d="M18 18l-3-3"/>
           </svg>
         </div>
-        <h3>Knowledge and Wellness</h3>
-        <p>Strategic supplementation, sleep optimization, stress management, and mobility protocols. The invisible hours between sessions are where real transformation happens.</p>
-        <div class="sneak-peek">
-          <button type="button" class="sneak-peek-pdf" data-lightbox-src="Nutrition Facts Ebook.pdf" data-lightbox-type="pdf"><span>Nutrition<br>Facts Ebook</span></button>
-          <button type="button" class="sneak-peek-pdf" data-lightbox-src="Supplement Guide.pdf" data-lightbox-type="pdf"><span>Supplement<br>Guide</span></button>
+        <h3>Knowledge</h3>
+        <p>Knowledge is what keeps progress lasting. Explore a complete supplement guide, nutritional facts for every food, a label-reading guide, and curated recipe books — the tools to make every choice an informed one.</p>
+        <div class="sneak-peek pdf-covers">
+          <a href="Nutrition Facts Ebook.pdf" target="_blank" class="pdf-cover-card" title="Nutrition Facts Ebook">
+            <img src="Nutrition-Facts-Cover.png" alt="Nutrition Facts Ebook" class="pdf-cover-img">
+            <div class="pdf-cover-overlay">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2.343M9 7h3M9 11h3M9 15h3"/>
+              </svg>
+              <span>Open PDF</span>
+            </div>
+          </a>
+          <a href="Supplement Guide.pdf" target="_blank" class="pdf-cover-card" title="Supplement Guide">
+            <img src="Supplement-Guide-Cover.png" alt="Supplement Guide" class="pdf-cover-img">
+            <div class="pdf-cover-overlay">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2.343M9 7h3M9 11h3M9 15h3"/>
+              </svg>
+              <span>Open PDF</span>
+            </div>
+          </a>
         </div>
-        <div class="sneak-peek-label">PDF previews — click to open</div>
+        <div class="sneak-peek-label">Click to open PDFs</div>
       </div>
     </div>
   </div>
