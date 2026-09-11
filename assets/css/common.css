@@ -71,6 +71,7 @@ body {
 .hero-rule { width: 70px; height: 1px; background: var(--gold); margin: 26px auto; animation: fadeUp 0.9s ease-out 0.2s both; }
 .hero-desc { font-family: 'Cormorant Garamond', serif; font-size: 20px; line-height: 1.75; color: var(--cream-soft); max-width: 560px; margin: 0 auto; font-style: italic; animation: fadeUp 0.9s ease-out 0.3s both; }
 .hero-meta { margin-top: 34px; font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--gray); text-transform: uppercase; animation: fadeUp 0.9s ease-out 0.4s both; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; }
+.whatsapp-number { color: inherit; text-decoration: none; }
 
 .form-shell { max-width: 780px; margin: 0 auto; padding: 60px 24px 100px; }
 .section { margin-top: 34px; animation: fadeUp 0.5s ease both; }
