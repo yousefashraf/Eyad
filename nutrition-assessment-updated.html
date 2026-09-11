@@ -353,7 +353,7 @@ footer .brand { color: var(--gold); }
           <div class="input-wrap"><input type="text" name="goalsOther" placeholder="Anything else?"></div>
         </div>
         <div class="field"><label class="field-label">What do you think is a realistic weight for you?</label>
-          <div class="input-wrap" style="max-width:220px;"><input type="text" name="realisticWeight" placeholder="e.g. 68 kg"></div>
+          <div class="input-wrap" style="max-width:220px;"><input type="text" name="realisticWeight" inputmode="decimal" placeholder="e.g. 68 kg"></div>
         </div>
         <div class="field"><label class="field-label">What motivates you to improve your nutritional habits?</label>
           <div class="input-wrap"><textarea name="motivation" rows="2"></textarea></div>
@@ -383,8 +383,12 @@ footer .brand { color: var(--gold); }
           <div class="pill-group yesno" data-group="digestive" data-reveal="digestiveDetail"><div class="pill" data-value="Yes">Yes</div><div class="pill" data-value="No">No</div></div>
           <div class="conditional" id="digestiveDetail"><label class="field-label">If yes, what foods may trigger it?</label><div class="input-wrap"><input type="text" name="digestiveTriggers"></div></div>
         </div>
-        <div class="field"><label class="field-label">Are you pregnant, or currently planning to have a baby?</label>
-          <div class="pill-group yesno" data-group="pregnant"><div class="pill" data-value="Yes">Yes</div><div class="pill" data-value="No">No</div></div>
+        <div class="field"><label class="field-label">Are you currently pregnant?</label>
+          <div class="pill-group yesno" data-group="pregnant" data-reveal="pregnancyTrimester"><div class="pill" data-value="Yes">Yes</div><div class="pill" data-value="No">No</div></div>
+          <div class="conditional" id="pregnancyTrimester"><label class="field-label">Which trimester are you in?</label><div class="pill-group" data-group="pregnancyTrimester"><div class="pill" data-value="First (weeks 1-13)">First (weeks 1-13)</div><div class="pill" data-value="Second (weeks 14-27)">Second (weeks 14-27)</div><div class="pill" data-value="Third (weeks 28-40)">Third (weeks 28-40)</div></div></div>
+        </div>
+        <div class="field"><label class="field-label">Are you currently planning to have a baby?</label>
+          <div class="pill-group yesno" data-group="planningPregnancy"><div class="pill" data-value="Yes">Yes</div><div class="pill" data-value="No">No</div></div>
         </div>
         <div class="field"><label class="field-label">Are you taking hormone replacement therapy?</label>
           <div class="pill-group yesno" data-group="hrt"><div class="pill" data-value="Yes">Yes</div><div class="pill" data-value="No">No</div></div>
@@ -822,7 +826,9 @@ document.getElementById('assessmentForm').addEventListener('submit', async funct
   lines.push('Seen nutritionist (12mo): ' + getGroupValue('seenNutritionist'));
   lines.push('Allergies/intolerances: ' + getGroupValue('allergies') + (get('allergiesList') ? ' — ' + get('allergiesList') : ''));
   lines.push('Bloating/discomfort: ' + getGroupValue('digestive') + (get('digestiveTriggers') ? ' — ' + get('digestiveTriggers') : ''));
-  lines.push('Pregnant/planning: ' + getGroupValue('pregnant'));
+  lines.push('Currently pregnant: ' + getGroupValue('pregnant'));
+  lines.push('Pregnancy trimester: ' + getGroupValue('pregnancyTrimester'));
+  lines.push('Planning to have a baby: ' + getGroupValue('planningPregnancy'));
   lines.push('Hormone replacement therapy: ' + getGroupValue('hrt'));
   lines.push('');
   lines.push('— CURRENT EATING PATTERN —');
