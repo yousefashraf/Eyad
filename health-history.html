@@ -129,8 +129,10 @@ footer .brand { color: var(--gold); }
 
 .medication-row { margin-bottom: 12px; }
 .medication-row .input-wrap { min-height: 52px; }
-.medication-row.single { display: block; }
+.medication-row.single { display: grid; gap: 8px; }
 .medication-row.single .input-wrap { width: 100%; }
+.medication-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#medsBox.open { overflow-y: auto; }
 
 @media (max-width: 640px) {
   .top-bar { padding: 4px 20px; } .hero { padding: 70px 20px 50px; } .form-shell { padding: 40px 16px 70px; }
@@ -396,6 +398,10 @@ function addMedicationRow() {
   row.className = 'medication-row single';
   row.innerHTML = `
     <div class="input-wrap"><input type="text" name="med${rowNum}_name" placeholder="Medication"></div>
+    <div class="medication-details">
+      <div class="input-wrap"><input type="text" name="med${rowNum}_dosage" placeholder="Dosage / frequency"></div>
+      <div class="input-wrap"><input type="text" name="med${rowNum}_condition" placeholder="Condition"></div>
+    </div>
   `;
   medicationRows.appendChild(row);
 }
