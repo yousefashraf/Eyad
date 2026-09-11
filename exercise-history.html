@@ -78,7 +78,9 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
 .chip.active span.label { color: var(--white); }
 
 .conditional { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease; opacity: 0; margin-top: 0; }
-.conditional.open { opacity: 1; margin-top: 16px; }
+.conditional.open { max-height: 400px; opacity: 1; margin-top: 16px; }
+#sportsBox:not(.open) { max-height: 0 !important; opacity: 0; margin-top: 0; pointer-events: none; }
+#sportsBox .row-2 { grid-template-columns: 1fr; row-gap: 16px; margin-top: 16px; }
 
 .divider { height: 1px; background: var(--border); margin: 30px 0; }
 
@@ -189,11 +191,11 @@ footer .brand { color: var(--gold); }
         <div class="conditional" id="sportsBox">
           <label class="field-label" style="margin-top:16px;">If yes, please select all that apply:</label>
           <div class="chip-grid" data-group="Sports" data-items="Basketball|Football|Golf|Handball|Padel|Tennis|Track &amp; field|Volleyball"></div>
+          <div class="row-2">
+            <div class="field"><label class="field-label">Other</label><div class="input-wrap"><input type="text" name="sportsOther"></div></div>
+            <div class="field"><label class="field-label">Combat sports (specify)</label><div class="input-wrap"><input type="text" name="combatSports"></div></div>
+          </div>
         </div>
-      </div>
-      <div class="row-2">
-        <div class="field"><label class="field-label">Other</label><div class="input-wrap"><input type="text" name="sportsOther"></div></div>
-        <div class="field"><label class="field-label">Combat sports (specify)</label><div class="input-wrap"><input type="text" name="combatSports"></div></div>
       </div>
       <div class="field"><label class="field-label">How many times per week do you participate in sport or athletic activity?</label>
         <div class="input-wrap" style="max-width:220px;"><input type="number" min="0" name="sessionsPerWeek"><span class="unit">sessions/week</span></div>

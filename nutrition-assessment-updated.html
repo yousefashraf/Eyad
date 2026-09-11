@@ -477,25 +477,12 @@ footer .brand { color: var(--gold); }
           <div class="input-wrap"><textarea name="schedule" rows="2"></textarea></div>
         </div>
         <div class="field"><label class="field-label">How many hours per night do you usually sleep?</label>
-          <div class="input-wrap select-wrap" style="max-width:160px;">
-            <select name="sleepHours">
-              <option value="" disabled selected>e.g. 7</option>
-              <option value="Less than 4">&lt; 4</option>
-              <option value="4">4</option>
-              <option value="4.5">4.5</option>
-              <option value="5">5</option>
-              <option value="5.5">5.5</option>
-              <option value="6">6</option>
-              <option value="6.5">6.5</option>
-              <option value="7">7</option>
-              <option value="7.5">7.5</option>
-              <option value="8">8</option>
-              <option value="8.5">8.5</option>
-              <option value="9">9</option>
-              <option value="9.5">9.5</option>
-              <option value="10">10</option>
-              <option value="More than 10">10+</option>
-            </select>
+          <div class="pill-group" data-group="sleepHours">
+            <div class="pill" data-value="&lt;4">&lt;4</div>
+            <div class="pill" data-value="4-5">4-5</div>
+            <div class="pill" data-value="6-7">6-7</div>
+            <div class="pill" data-value="8-9">8-9</div>
+            <div class="pill" data-value="9+">9+</div>
           </div>
         </div>
         <div class="field"><label class="field-label">Describe any emotional stressors or environmental issues that affect your eating.</label>
@@ -843,7 +830,7 @@ document.getElementById('assessmentForm').addEventListener('submit', async funct
   lines.push('');
   lines.push('— CURRENT LIVING PATTERN —');
   lines.push('Schedule: ' + get('schedule'));
-  lines.push('Sleep hours: ' + get('sleepHours'));
+  lines.push('Sleep hours: ' + getGroupValue('sleepHours'));
   lines.push('Stressors: ' + get('stressors'));
   lines.push('Eats on the go/delivery: ' + getGroupValue('eatOnGo'));
   lines.push('Emotional eating: ' + getGroupValue('emotionalEating'));
