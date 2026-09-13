@@ -172,11 +172,39 @@ body {
 .sneak-peek.nutrition-covers {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+.sneak-peek.knowledge-covers {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.pdf-cover-card.youtube-cover {
+  display: flex; flex-direction: column;
+  background: linear-gradient(180deg, rgba(8, 10, 12, 0.18), rgba(8, 10, 12, 0.86)), url('transformation/download.jpg') center / cover no-repeat;
+  color: var(--gold); border: 1px solid var(--gold); align-items: center; justify-content: center;
+}
+.youtube-cover::before {
+  content: ''; position: absolute; inset: 10px; border: 1px solid rgba(201,168,76,0.45);
+}
+.youtube-icon {
+  position: relative; z-index: 1; width: 36px; height: 26px;
+  border: 1px solid var(--gold); border-radius: 7px;
+}
+.youtube-icon::after {
+  content: ''; position: absolute; top: 7px; left: 14px;
+  border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+  border-left: 9px solid var(--gold);
+}
 .pdf-cover-card {
   position: relative; display: block; width: 100%; aspect-ratio: 0.7 / 1;
   border-radius: 4px; overflow: hidden; cursor: pointer;
   box-shadow: 0 8px 24px rgba(0,0,0,0.3); transition: all 0.4s ease;
   text-decoration: none;
+}
+.nutrition-plan-letter {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  width: 28px; height: 28px; display: grid; place-items: center;
+  border: 1px solid rgba(255,255,255,0.7); border-radius: 50%;
+  background: rgba(28, 35, 25, 0.78); color: var(--gold);
+  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 1px;
 }
 .pdf-cover-card:hover {
   transform: translateY(-6px);
@@ -1046,14 +1074,17 @@ body.about-page #about, body.about-page #certificates { display: none; }
         <div class="sneak-peek pdf-covers nutrition-covers">
           <a href="Nutrition plan - Sample A.pdf" target="_blank" rel="noopener" class="pdf-cover-card" title="Open nutrition plan sample A">
             <img src="assets/images/nutrition-plan-sample-a-cover.png" alt="Nutrition Plan Sample A" class="pdf-cover-img">
+            <span class="nutrition-plan-letter" aria-label="Plan A">A</span>
             <div class="pdf-cover-overlay"><span>Open PDF</span></div>
           </a>
           <a href="Nutrition plan - Sample B.pdf" target="_blank" rel="noopener" class="pdf-cover-card" title="Open nutrition plan sample B">
             <img src="assets/images/nutrition-plan-sample-b-cover.png" alt="Nutrition Plan Sample B" class="pdf-cover-img">
+            <span class="nutrition-plan-letter" aria-label="Plan B">B</span>
             <div class="pdf-cover-overlay"><span>Open PDF</span></div>
           </a>
           <a href="Nutrition plan - Sample C.pdf" target="_blank" rel="noopener" class="pdf-cover-card" title="Open nutrition plan sample C">
             <img src="assets/images/nutrition-plan-sample-c-cover.png" alt="Nutrition Plan Sample C" class="pdf-cover-img">
+            <span class="nutrition-plan-letter" aria-label="Plan C">C</span>
             <div class="pdf-cover-overlay"><span>Open PDF</span></div>
           </a>
         </div>
@@ -1072,7 +1103,7 @@ body.about-page #about, body.about-page #certificates { display: none; }
         </div>
         <h3>Knowledge</h3>
         <p>Knowledge is what keeps progress lasting. Explore a complete supplement guide, nutritional facts for every food, a label-reading guide, and curated recipe books — the tools to make every choice an informed one.</p>
-        <div class="sneak-peek pdf-covers">
+        <div class="sneak-peek pdf-covers knowledge-covers">
           <a href="Nutrition Facts Ebook.pdf" target="_blank" class="pdf-cover-card" title="Nutrition Facts Ebook">
             <img src="Nutrition-Facts-Cover.png" alt="Nutrition Facts Ebook" class="pdf-cover-img">
             <div class="pdf-cover-overlay">
@@ -1091,8 +1122,14 @@ body.about-page #about, body.about-page #certificates { display: none; }
               <span>Open PDF</span>
             </div>
           </a>
+          <a href="https://www.youtube.com/@eyadbassem98" target="_blank" rel="noopener" class="pdf-cover-card youtube-cover" title="Open Eyad Bassem on YouTube">
+            <span class="youtube-icon" aria-hidden="true"></span>
+            <div class="pdf-cover-overlay">
+              <span>Open YouTube</span>
+            </div>
+          </a>
         </div>
-        <div class="sneak-peek-label">Click to open PDFs</div>
+        <div class="sneak-peek-label">Click to open resources</div>
       </div>
     </div>
   </div>
