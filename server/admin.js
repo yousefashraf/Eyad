@@ -189,4 +189,35 @@ export function attachAdminRoutes(router) {
       payload: safeParseJson(row.payload),
     })) });
   });
+
+  router.get('/admin/submissions/:id', (req, res) => {
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
+    const submissionId = Number(req.params.id);
+    if (!Number.isInteger(submissionId) || submissionId < 1) {
+      return sendJson(res, 400, { error: 'Invalid submission.' });
+    }
+
+    const row = getDb().prepare(`
+      SELECT s.*, u.email, u.full_name, u.phone_country, u.phone, u.phone_e164
+      FROM assignment_submissions s
+      JOIN users u ON u.id = s.user_id
+      WHERE s.id = ?
+    `).get(submissionId);
+    if (!row) return sendJson(res, 404, { error: 'Submission not found.' });
+
+    return sendJson(res, 200, { submission: {
+      id: row.id,
+      userId: row.user_id,
+      fullName: row.full_name,
+      email: row.email,
+      phone: row.phone_e164 || `${row.phone_country || ''}${row.phone || ''}`,
+      assignmentKey: row.assignment_key,
+      assignmentTitle: row.assignment_title,
+      summary: row.summary || '',
+      submittedAt: row.submitted_at,
+      payload: safeParseJson(row.payload),
+    } });
+  });
 }

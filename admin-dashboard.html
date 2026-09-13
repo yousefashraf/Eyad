@@ -445,6 +445,19 @@
     .submission-client strong {
       color: var(--cream);
     }
+    .submission-open-link {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .submission-open-link:hover {
+      color: var(--cream);
+    }
     .submission-summary {
       margin: 14px 0;
       padding: 14px;
@@ -834,6 +847,7 @@
             <div class="submission-client">
               <strong>Email:</strong> ${item.email || '—'}
             </div>
+            <a class="submission-open-link" href="admin-submission.html?id=${encodeURIComponent(item.id)}">View completed form and answers</a>
             ${item.summary ? `
               <div class="submission-summary">
                 <div class="submission-summary-title">Summary</div>

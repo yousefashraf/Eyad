@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Completed Form - Evolved &amp; Balanced</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#0a0a0a; --panel:#141414; --line:rgba(255,255,255,.1); --line-strong:rgba(255,255,255,.16); --gold:#c9a84c; --cream:#e8e0d0; --soft:#d5cfc4; --muted:#8a8a8a; --white:#f0ebe3; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; min-height:100vh; background:var(--bg); color:var(--cream); font-family:Montserrat,sans-serif; }
+.topbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:4px 40px; min-height:89px; background:rgba(10,10,10,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(18px); }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-mark { display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--gold); border-radius:50%; color:var(--gold); font:italic 26px 'Playfair Display',serif; }
+.brand-name { color:var(--white); font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
+.top-actions { display:flex; gap:10px; }
+.top-actions a { padding:10px 14px; border:1px solid var(--line-strong); color:var(--soft); font-size:10px; font-weight:600; letter-spacing:1px; text-decoration:none; text-transform:uppercase; }
+.top-actions a:hover { border-color:var(--gold); color:var(--gold); }
+.hero { padding:100px 40px 70px; border-bottom:1px solid var(--line); text-align:center; }
+.eyebrow { color:var(--gold); font:italic 21px 'Playfair Display',serif; }
+h1 { margin:8px 0 18px; color:var(--white); font-size:clamp(30px,5vw,46px); font-weight:700; letter-spacing:5px; line-height:1.25; text-transform:uppercase; }
+.rule { width:70px; height:1px; margin:26px auto; background:var(--gold); }
+.hero-meta { color:var(--muted); font-size:10px; letter-spacing:1.5px; line-height:1.8; text-transform:uppercase; }
+.form-shell { width:min(100%,760px); margin:0 auto; padding:60px 24px 100px; }
+.section { margin-bottom:26px; }
+.section-bar { display:flex; align-items:baseline; gap:14px; padding:18px 24px; border:1px solid var(--line-strong); background:var(--bg); }
+.section-bar .num { color:var(--gold); font:italic 20px 'Playfair Display',serif; }
+.section-bar h2 { margin:0; color:var(--white); font-size:14px; letter-spacing:2px; text-transform:uppercase; }
+.section-body { padding:40px 30px 34px; border:1px solid var(--line); border-top:0; background:rgba(255,255,255,.012); }
+.answer { min-width:0; margin-bottom:30px; }
+.answer:last-child { margin-bottom:0; }
+.answer-label { display:block; margin-bottom:12px; color:var(--soft); font-size:13px; font-weight:600; letter-spacing:1px; line-height:1.5; }
+.answer-question { margin-bottom:18px; color:var(--white); font:20px/1.45 'Cormorant Garamond',serif; }
+.answer-label-answer { margin-top:4px; }
+.answer-value { min-height:52px; padding:15px 16px; border:1px solid var(--line-strong); background:rgba(255,255,255,.02); color:var(--white); font:19px/1.6 'Cormorant Garamond',serif; white-space:pre-wrap; overflow-wrap:anywhere; }
+.summary { margin-bottom:28px; padding:18px 20px; border-left:3px solid var(--gold); background:rgba(255,255,255,.025); color:var(--soft); font:18px/1.5 'Cormorant Garamond',serif; }
+.summary strong { display:block; margin-bottom:6px; color:var(--gold); font:600 10px Montserrat,sans-serif; letter-spacing:1.5px; text-transform:uppercase; }
+.state { padding:70px 24px; text-align:center; color:var(--muted); }
+.error { color:#d99a89; }
+@media (max-width:620px) { .topbar { padding:12px 18px; min-height:70px; } .brand-name { font-size:10px; } .top-actions a { padding:9px 10px; } .hero { padding:70px 20px 50px; } .form-shell { padding:40px 16px 70px; } .section-bar { padding:16px 18px; } .section-body { padding:30px 20px 26px; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">&amp;</div><div class="brand-name">Evolved &amp; Balanced</div></div>
+  <div class="top-actions"><a href="admin-dashboard.html">Back to Dashboard</a><a href="#" id="logoutLink">Sign Out</a></div>
+</header>
+<section class="hero">
+  <div class="eyebrow">Completed Submission</div>
+  <h1 id="formTitle">Loading Form</h1>
+  <div class="rule"></div>
+  <div class="hero-meta" id="clientMeta">Loading client details</div>
+</section>
+<main class="form-shell" id="formContent"><div class="state">Loading completed answers...</div></main>
+<script type="module">
+const LABELS = {
+  fields: 'Responses',
+  pills: 'Selections',
+  chips: 'Selected Options',
+  radios: 'Choices',
+  pain: 'Pain Areas',
+};
+const titleMap = {
+  'nutrition-assessment': 'Nutrition Assessment',
+  'dietary-log': 'Dietary Log',
+  'exercise-history': 'Exercise History',
+  'food-preferences': 'Food Preferences',
+  'health-history': 'Health History',
+};
+const formPaths = {
+  'nutrition-assessment': 'nutrition-assessment-updated.html',
+  'dietary-log': 'dietary-log.html',
+  'exercise-history': 'exercise-history.html',
+  'food-preferences': 'food-preferences.html',
+  'health-history': 'health-history.html',
+};
+const hiddenFields = new Set(['fullName', 'dob', 'gender', 'phoneCountry', 'phone', 'email', 'height', 'weight']);
+const formContent = document.getElementById('formContent');
+const formTitle = document.getElementById('formTitle');
+const clientMeta = document.getElementById('clientMeta');
+const query = new URLSearchParams(window.location.search);
+const submissionId = query.get('id');
+
+function humanize(value) {
+  return String(value || '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+function escapeHtml(value) {
+  const div = document.createElement('div');
+  div.textContent = String(value ?? '');
+  return div.innerHTML;
+}
+function answerValue(value) {
+  if (Array.isArray(value)) return value.length ? value.map(escapeHtml).join(', ') : 'No answer';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  return value === '' || value == null ? 'No answer' : escapeHtml(value);
+}
+async function loadQuestionLabels(assignmentKey) {
+  const path = formPaths[assignmentKey];
+  if (!path) return {};
+  const response = await fetch(path);
+  if (!response.ok) return {};
+  const document = new DOMParser().parseFromString(await response.text(), 'text/html');
+  const labels = {};
+  document.querySelectorAll('[name]').forEach((control) => {
+    const field = control.closest('.field');
+    const label = field?.querySelector('.field-label');
+    if (label && !labels[control.name]) labels[control.name] = label.textContent.trim();
+  });
+  document.querySelectorAll('[data-group]').forEach((control) => {
+    const field = control.closest('.field');
+    const label = field?.querySelector('.field-label');
+    if (label && !labels[control.dataset.group]) labels[control.dataset.group] = label.textContent.trim();
+  });
+  return labels;
+}
+function renderAnswers(payload, questions) {
+  const groups = [];
+  for (const [group, values] of Object.entries(payload || {})) {
+    if (group === 'pain') {
+      if (Array.isArray(values) && values.length) groups.push({ title: LABELS[group], values: { pain: values } });
+      continue;
+    }
+    if (!values || typeof values !== 'object' || Array.isArray(values)) continue;
+    const entries = Object.entries(values).filter(([key, value]) => !hiddenFields.has(key) && value !== '' && value != null && (!Array.isArray(value) || value.length));
+    if (entries.length) groups.push({ title: LABELS[group] || humanize(group), values: Object.fromEntries(entries) });
+  }
+  if (!groups.length) return '<div class="state">No answers were recorded.</div>';
+  return groups.map((group, index) => `
+    <section class="section">
+      <div class="section-bar"><span class="num">${String(index + 1).padStart(2, '0')}</span><h2>${escapeHtml(group.title)}</h2></div>
+      <div class="section-body">${Object.entries(group.values).map(([key, value]) => `<div class="answer"><span class="answer-label">Question</span><div class="answer-question">${escapeHtml(questions[key] || (key === 'pain' ? 'Where do you experience pain?' : humanize(key)))}</div><span class="answer-label answer-label-answer">Answer</span><div class="answer-value">${answerValue(value)}</div></div>`).join('')}</div>
+    </section>
+  `).join('');
+}
+async function load() {
+  if (!submissionId) throw new Error('Missing submission ID.');
+  const response = await fetch(`/api/admin/submissions/${encodeURIComponent(submissionId)}`, { credentials: 'same-origin' });
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 401 || response.status === 403) { window.location.href = 'admin-login.html'; return; }
+  if (!response.ok) throw new Error(data.error || 'Could not load submission.');
+  const item = data.submission;
+  if (!item) throw new Error(data.error || 'This completed submission could not be found.');
+  const questions = await loadQuestionLabels(item.assignmentKey);
+  formTitle.textContent = item.assignmentTitle || titleMap[item.assignmentKey] || 'Completed Form';
+  clientMeta.textContent = `${item.fullName || 'Client'} · ${item.email || item.phone || 'No contact'} · Submitted ${new Date(item.submittedAt).toLocaleDateString()}`;
+  formContent.innerHTML = `${item.summary ? `<div class="summary"><strong>Client Summary</strong>${escapeHtml(item.summary)}</div>` : ''}${renderAnswers(item.payload, questions)}`;
+}
+load().catch((error) => { formContent.innerHTML = `<div class="state error">${escapeHtml(error.message)}</div>`; });
+document.getElementById('logoutLink').addEventListener('click', async (event) => { event.preventDefault(); await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); window.location.href = 'admin-login.html'; });
+</script>
+</body>
+</html>
