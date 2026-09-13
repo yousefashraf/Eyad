@@ -356,6 +356,25 @@
       padding: 10px 14px;
       font-size: 11px;
     }
+    .whatsapp-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px 14px;
+      border: 1px solid rgba(122,162,122,0.55);
+      background: rgba(122,162,122,0.12);
+      color: #bfddbf;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .whatsapp-btn:hover {
+      background: rgba(122,162,122,0.22);
+      border-color: rgba(122,162,122,0.8);
+    }
     .submissions-section {
       margin-top: 48px;
     }
@@ -529,6 +548,7 @@
         <button class="ghost-btn" id="modalCancel" type="button">Cancel</button>
         <button class="primary-btn" id="modalConfirm" type="button">Send Invite</button>
       </div>
+      <a class="whatsapp-btn" id="modalWhatsApp" href="#" target="_blank" rel="noopener" style="display: none;">Open WhatsApp</a>
     </div>
   </div>
 
@@ -540,6 +560,14 @@
       'food-preferences': 'Food Preferences',
       'health-history': 'Health History',
     };
+    const ASSIGNMENT_PATHS = {
+      'nutrition-assessment': 'nutrition-assessment-updated.html',
+      'dietary-log': 'dietary-log.html',
+      'exercise-history': 'exercise-history.html',
+      'food-preferences': 'food-preferences.html',
+      'health-history': 'health-history.html',
+    };
+    const PUBLIC_SITE_URL = 'https://eb-athletic.com';
 
     const statsGrid = document.getElementById('statsGrid');
     const clientsTable = document.getElementById('clientsTable');
@@ -550,6 +578,7 @@
     const modalText = document.getElementById('modalText');
     const modalConfirm = document.getElementById('modalConfirm');
     const modalCancel = document.getElementById('modalCancel');
+    const modalWhatsApp = document.getElementById('modalWhatsApp');
 
     let pendingInvite = null;
     let allUsers = [];
@@ -570,7 +599,25 @@
       const userName = user.fullName || user.email;
       modalText.textContent = `Send an invite to ${userName} for the ${formLabel} form?`;
       pendingInvite = { user, assignmentKey };
+      setWhatsAppInviteLink(user, [assignmentKey]);
       inviteModal.classList.add('show');
+    }
+
+    function setWhatsAppInviteLink(user, assignmentKeys) {
+      const number = String(user.whatsappNumber || `${user.phoneCountry || ''}${user.phone || ''}`).replace(/\D/g, '');
+      if (!number) {
+        modalWhatsApp.style.display = 'none';
+        return;
+      }
+      const formLinks = assignmentKeys.map((key) => {
+        const label = ASSIGNMENT_LABELS[key] || key.replace(/-/g, ' ');
+        const path = ASSIGNMENT_PATHS[key] || '';
+        const url = path ? `${PUBLIC_SITE_URL}/${path}` : PUBLIC_SITE_URL;
+        return `${label}: ${url}`;
+      }).join('\n');
+      const message = `Hello${user.fullName ? ` ${user.fullName}` : ''}, this is Evolved & Balanced. Your form${assignmentKeys.length > 1 ? 's are' : ' is'} now available.\n\n${formLinks}\n\nPlease sign in to your account to complete it.`;
+      modalWhatsApp.href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+      modalWhatsApp.style.display = 'block';
     }
 
     function closeInviteModal() {
@@ -706,6 +753,7 @@
           } else if (unassigned.length > 1) {
             pendingInvite = { user, assignmentKeys: unassigned };
             modalText.textContent = `Send invites to ${user.fullName || user.email} for ${unassigned.length} forms?`;
+            setWhatsAppInviteLink(user, unassigned);
             inviteModal.classList.add('show');
           }
         });
