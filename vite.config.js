@@ -47,6 +47,20 @@ function copyStaticAssets() {
         'ISSA-Certified-Personal-Trainer-Certification.pdf',
         'ISSA-Nutritionist-Certification.pdf',
         'ISSA-Strength-and-Conditioning-Certification.pdf',
+        'Nutrition plan - Sample A.pdf',
+        'Nutrition plan - Sample B.pdf',
+        'Nutrition plan - Sample C.pdf',
+      ]) {
+        this.emitFile({
+          type: 'asset',
+          fileName: file,
+          source: await readFile(resolve(rootDir, file)),
+        });
+      }
+      for (const file of [
+        'assets/images/nutrition-plan-sample-a-cover.png',
+        'assets/images/nutrition-plan-sample-b-cover.png',
+        'assets/images/nutrition-plan-sample-c-cover.png',
       ]) {
         this.emitFile({
           type: 'asset',
