@@ -258,6 +258,10 @@
         background: transparent;
     }
 
+    #navbar.site-nav .nav-dropdown:hover .dropdown-menu {
+        display: none;
+    }
+
     #navbar.site-nav .nav-dropdown.open .dropdown-menu {
         display: block;
     }
