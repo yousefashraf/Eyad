@@ -9,6 +9,57 @@ export const ASSIGNMENTS = {
   'health-history': 'Health History',
 };
 
+const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'eyad.bassem98@hotmail.com';
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+async function notifyAdminOfSubmission(user, submission) {
+  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+    console.info('[email] Submission notification skipped: Resend is not configured.');
+    return;
+  }
+
+  const formUrl = `${process.env.PUBLIC_SITE_URL || 'https://eb-athletic.com'}/admin-submission.html?id=${submission.id}`;
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: process.env.RESEND_FROM_EMAIL,
+      to: [ADMIN_EMAIL],
+      subject: `New ${submission.assignmentTitle} submission from ${user.full_name}`,
+      text: [
+        `A client submitted ${submission.assignmentTitle}.`,
+        `Client: ${user.full_name}`,
+        `Email: ${user.email || 'Not provided'}`,
+        `WhatsApp: ${user.phone_e164 || user.phone || 'Not provided'}`,
+        `Submitted: ${submission.submitted_at}`,
+        submission.summary ? `Summary: ${submission.summary}` : '',
+        `View answers: ${formUrl}`,
+      ].filter(Boolean).join('\n'),
+      html: `
+        <h2>New ${escapeHtml(submission.assignmentTitle)} submission</h2>
+        <p><strong>Client:</strong> ${escapeHtml(user.full_name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(user.email || 'Not provided')}</p>
+        <p><strong>WhatsApp:</strong> ${escapeHtml(user.phone_e164 || user.phone || 'Not provided')}</p>
+        <p><strong>Submitted:</strong> ${escapeHtml(submission.submitted_at)}</p>
+        ${submission.summary ? `<p><strong>Summary:</strong> ${escapeHtml(submission.summary)}</p>` : ''}
+        <p><a href="${escapeHtml(formUrl)}">View completed form and answers</a></p>
+      `,
+    }),
+  });
+  if (!response.ok) throw new Error(`Resend returned ${response.status}.`);
+}
+
 function publicSubmission(row) {
   let payload = {};
   try {
@@ -57,6 +108,9 @@ export function attachAssignmentRoutes(router) {
       `).run(user.id, assignmentKey, title, payloadJson, summary);
 
       const row = db.prepare('SELECT * FROM assignment_submissions WHERE id = ?').get(info.lastInsertRowid);
+      notifyAdminOfSubmission(user, row).catch((error) => {
+        console.error('submission email failed', error);
+      });
       return sendJson(res, 201, { submission: publicSubmission(row) });
     } catch (err) {
       console.error('save assignment failed', err);
