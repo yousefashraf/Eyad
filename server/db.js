@@ -14,6 +14,20 @@ mkdirSync(dataDir, { recursive: true });
 
 let db;
 
+function normalizeStoredPhone(country, phone) {
+  const countryDigits = String(country || '').replace(/\D/g, '');
+  const phoneDigits = String(phone || '').replace(/\D/g, '');
+  if (!phoneDigits) return '';
+  if (String(phone || '').trim().startsWith('+')) {
+    const international = `+${phoneDigits}`;
+    return /^\+[1-9]\d{7,14}$/.test(international) ? international : '';
+  }
+  if (!countryDigits) return '';
+  const national = phoneDigits.replace(/^0+/, '');
+  const value = `+${countryDigits}${national}`;
+  return /^\+[1-9]\d{7,14}$/.test(value) ? value : '';
+}
+
 function persist() {
   const data = db.export();
   writeFileSync(dbPath, Buffer.from(data));
@@ -162,6 +176,14 @@ export async function initDb() {
     raw.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'client'");
     persist();
   }
+  const users = raw.exec('SELECT id, phone_country, phone, phone_e164 FROM users')[0]?.values || [];
+  for (const [id, phoneCountry, phone, phoneE164] of users) {
+    if (!phoneE164) {
+      const normalized = normalizeStoredPhone(phoneCountry, phone);
+      if (normalized) raw.run('UPDATE users SET phone_e164 = ? WHERE id = ?', [normalized, id]);
+    }
+  }
+  persist();
   raw.run("UPDATE users SET role = 'admin' WHERE lower(email) = 'eyad.bassem98@hotmail.com'");
   persist();
 }

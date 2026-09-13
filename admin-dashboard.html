@@ -215,6 +215,11 @@
       color: var(--gray);
       font-size: 12px;
     }
+    .client-phone-cell {
+      color: var(--gray);
+      font-size: 12px;
+      white-space: nowrap;
+    }
     .form-status-badge-small {
       display: inline-block;
       padding: 4px 8px;
@@ -488,7 +493,7 @@
     <section class="clients-section">
       <h2 class="section-title">Clients</h2>
       <div class="search-box">
-        <input type="text" class="search-input" id="clientSearch" placeholder="Search clients by name or email..." />
+        <input type="text" class="search-input" id="clientSearch" placeholder="Search clients by name, email, or phone..." />
       </div>
       <div class="clients-table-wrap">
         <table class="clients-table">
@@ -496,6 +501,7 @@
             <tr>
               <th>Name</th>
               <th>Email</th>
+              <th>WhatsApp</th>
               <th>Forms</th>
               <th>Actions</th>
             </tr>
@@ -613,7 +619,10 @@
       } else {
         filteredUsers = allUsers.filter(user => 
           (user.fullName || '').toLowerCase().includes(q) ||
-          (user.email || '').toLowerCase().includes(q)
+          (user.email || '').toLowerCase().includes(q) ||
+          (user.phone || '').toLowerCase().includes(q) ||
+          (user.phoneCountry || '').toLowerCase().includes(q) ||
+          (user.whatsappNumber || '').toLowerCase().includes(q)
         );
       }
       renderClientsTable(filteredUsers);
@@ -621,7 +630,7 @@
 
     function renderClientsTable(users) {
       if (!users.length) {
-        clientsTable.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--gray);">No clients found.</td></tr>`;
+        clientsTable.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--gray);">No clients found.</td></tr>`;
         return;
       }
 
@@ -650,6 +659,9 @@
             </td>
             <td>
               <div class="client-email-cell">${user.email}</div>
+            </td>
+            <td>
+              <div class="client-phone-cell">${user.whatsappNumber || `${user.phoneCountry || ''} ${user.phone || 'Not provided'}`}</div>
             </td>
             <td>${statusHtml || '<span style="color: var(--gray);">No forms</span>'}</td>
             <td class="actions-cell">${buttonHtml}</td>

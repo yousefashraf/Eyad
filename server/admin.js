@@ -59,6 +59,9 @@ export function buildDashboardRows(users, assignments, submissions) {
       id: user.id,
       email: user.email,
       fullName: user.full_name,
+      phoneCountry: user.phone_country || '',
+      phone: user.phone || '',
+      whatsappNumber: user.phone_e164 || `${user.phone_country || ''}${user.phone || ''}`,
       forms,
     };
   });
