@@ -1,5 +1,6 @@
 import { getDb } from './db.js';
 import { requireUser, sendJson } from './auth.js';
+import { config } from './config.js';
 
 export const ASSIGNMENTS = {
   'nutrition-assessment': 'Nutrition Assessment',
@@ -9,7 +10,7 @@ export const ASSIGNMENTS = {
   'health-history': 'Health History',
 };
 
-const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'eyad.bassem98@hotmail.com';
+const ADMIN_EMAIL = config.adminEmail;
 
 function escapeHtml(value) {
   return String(value || '')
@@ -21,20 +22,20 @@ function escapeHtml(value) {
 }
 
 async function notifyAdminOfSubmission(user, submission) {
-  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+  if (!config.resendApiKey || !config.resendFromEmail) {
     console.info('[email] Submission notification skipped: Resend is not configured.');
     return;
   }
 
-  const formUrl = `${process.env.PUBLIC_SITE_URL || 'https://eb-athletic.com'}/admin-submission.html?id=${submission.id}`;
+  const formUrl = `${config.publicSiteUrl}/admin-submission.html?id=${submission.id}`;
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      Authorization: `Bearer ${config.resendApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.RESEND_FROM_EMAIL,
+      from: config.resendFromEmail,
       to: [ADMIN_EMAIL],
       subject: `New ${submission.assignmentTitle} submission from ${user.full_name}`,
       text: [

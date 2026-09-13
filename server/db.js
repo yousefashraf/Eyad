@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { createRequire } from 'module';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
+import { config } from './config.js';
 
 const require = createRequire(import.meta.url);
 const initSqlJs = require('sql.js');
@@ -184,7 +185,7 @@ export async function initDb() {
     }
   }
   persist();
-  raw.run("UPDATE users SET role = 'admin' WHERE lower(email) = 'eyad.bassem98@hotmail.com'");
+  raw.run("UPDATE users SET role = 'admin' WHERE lower(email) = ?", [config.adminEmail]);
   persist();
 }
 

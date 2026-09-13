@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { readdir, readFile } from 'fs/promises';
 import { defineConfig } from 'vite';
 import { createApiRouter } from './server/app.js';
+import { config } from './server/config.js';
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
@@ -76,11 +77,11 @@ export default defineConfig({
   plugins: [localAuthApi(), copyStaticAssets()],
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: config.serverPort,
   },
   preview: {
     host: '0.0.0.0',
-    port: 4173,
+    port: config.previewPort,
   },
   build: {
     rollupOptions: {

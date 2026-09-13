@@ -1,6 +1,7 @@
 import { createHash, randomBytes, randomInt, scrypt, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
 import { getDb } from './db.js';
+import { config } from './config.js';
 
 const scryptAsync = promisify(scrypt);
 
@@ -29,12 +30,12 @@ function hashOtp(code) {
 }
 
 function configuredWhatsApp() {
-  return process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_WHATSAPP_FROM;
+  return config.twilioAccountSid && config.twilioAuthToken && config.twilioWhatsAppFrom;
 }
 
 async function sendWhatsAppCode(phone, code) {
   if (!configuredWhatsApp()) {
-    if (process.env.NODE_ENV === 'production' && process.env.AUTH_OTP_DEV_MODE !== 'true') {
+    if (config.nodeEnv === 'production' && !config.authOtpDevMode) {
       throw new Error('WhatsApp delivery is not configured.');
     }
     console.info(`[auth] WhatsApp OTP for ${phone}: ${code}`);
@@ -43,12 +44,12 @@ async function sendWhatsAppCode(phone, code) {
 
   const body = new URLSearchParams({
     To: `whatsapp:${phone}`,
-    From: `whatsapp:${process.env.TWILIO_WHATSAPP_FROM}`,
+    From: `whatsapp:${config.twilioWhatsAppFrom}`,
     Body: `Your Evolved & Balanced verification code is ${code}. It expires in 5 minutes.`,
   });
-  const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+  const auth = Buffer.from(`${config.twilioAccountSid}:${config.twilioAuthToken}`).toString('base64');
   const response = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${encodeURIComponent(process.env.TWILIO_ACCOUNT_SID)}/Messages.json`,
+    `https://api.twilio.com/2010-04-01/Accounts/${encodeURIComponent(config.twilioAccountSid)}/Messages.json`,
     { method: 'POST', headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body },
   );
   if (!response.ok) throw new Error(`WhatsApp delivery failed (${response.status}).`);
