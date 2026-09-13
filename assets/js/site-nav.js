@@ -184,9 +184,7 @@ import { getCurrentUser, logout } from './auth-api.js';
   dropdowns.forEach((dropdown) => {
     const trigger = dropdown.querySelector('.nav-trigger');
     trigger.addEventListener('click', (event) => {
-      if (window.matchMedia('(max-width: 968px)').matches && trigger.tagName === 'A') {
-        event.preventDefault();
-      }
+      if (trigger.tagName === 'A') return;
       const open = dropdown.classList.toggle('open');
       closeDropdowns(open ? dropdown : null);
       trigger.setAttribute('aria-expanded', String(open));
