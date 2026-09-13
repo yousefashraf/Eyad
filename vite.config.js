@@ -88,6 +88,7 @@ export default defineConfig({
         resolve(rootDir, 'index.html'),
         resolve(rootDir, 'about.html'),
         resolve(rootDir, 'auth-updated.html'),
+        resolve(rootDir, 'admin-login.html'),
         resolve(rootDir, 'admin-dashboard.html'),
         resolve(rootDir, 'dietary-log.html'),
         resolve(rootDir, 'exercise-history.html'),

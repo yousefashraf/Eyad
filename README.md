@@ -11,6 +11,8 @@ npm run dev
 
 Then open the local URL shown in the terminal. Create an account on `auth-updated.html` — the API lives at `/api` on the same origin.
 
+Registration and sign-in use the client's WhatsApp number and password.
+
 ## Production build
 
 ```bash

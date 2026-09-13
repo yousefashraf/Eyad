@@ -2,19 +2,13 @@ import { getDb } from './db.js';
 import { getUserFromRequest, sendJson } from './auth.js';
 import { ASSIGNMENTS } from './assignments.js';
 
-export const ADMIN_EMAIL = 'eyad.bassem98@hotmail.com';
-
-export function isAdminEmail(email) {
-  return String(email || '').trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
-}
-
 function requireAdmin(req, res) {
   const user = getUserFromRequest(req);
   if (!user) {
     sendJson(res, 401, { error: 'Not signed in.' });
     return null;
   }
-  if (!isAdminEmail(user.email)) {
+  if (user.role !== 'admin') {
     sendJson(res, 403, { error: 'Admin access required.' });
     return null;
   }

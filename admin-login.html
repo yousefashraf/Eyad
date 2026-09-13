@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign In - Evolved &amp; Balanced</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0a0a0a; --panel: #141414; --line: rgba(255,255,255,0.12); --gold: #c9a84c; --cream: #e8e0d0; --muted: #8a8a8a; --danger: #bd6e5a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--bg); color: var(--cream); font-family: Montserrat, sans-serif; }
+    .login-card { width: min(100%, 420px); padding: 44px 38px; border: 1px solid var(--line); background: var(--panel); }
+    .brand { text-align: center; margin-bottom: 36px; }
+    .brand-mark { color: var(--gold); font: italic 36px 'Playfair Display', serif; }
+    .brand h1 { margin: 12px 0 8px; font-size: 18px; letter-spacing: 2.5px; text-transform: uppercase; }
+    .brand p { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .field { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 9px; color: var(--cream); font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    input { width: 100%; padding: 14px; border: 1px solid var(--line); outline: none; background: rgba(255,255,255,0.03); color: var(--cream); font: 16px Georgia, serif; }
+    input:focus { border-color: var(--gold); box-shadow: 0 0 12px rgba(201,168,76,0.12); }
+    .error { min-height: 21px; margin: 0 0 14px; color: var(--danger); font: italic 14px Georgia, serif; }
+    button { width: 100%; padding: 15px; border: 0; background: var(--cream); color: var(--bg); cursor: pointer; font: 700 11px Montserrat, sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+    button:hover { background: var(--gold); }
+    button:disabled { cursor: wait; opacity: 0.65; }
+    .back { display: block; margin-top: 24px; color: var(--muted); text-align: center; font-size: 11px; text-decoration: none; }
+    .back:hover { color: var(--gold); }
+    @media (max-width: 480px) { .login-card { padding: 36px 24px; } }
+  </style>
+</head>
+<body>
+  <main class="login-card">
+    <div class="brand">
+      <div class="brand-mark">&amp;</div>
+      <h1>Admin Dashboard</h1>
+      <p>Private access</p>
+    </div>
+    <form id="adminLoginForm" novalidate>
+      <div class="field">
+        <label for="adminEmail">Email</label>
+        <input id="adminEmail" name="email" type="email" autocomplete="username" placeholder="admin@email.com" required>
+      </div>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+      </div>
+      <p class="error" id="adminError" role="alert"></p>
+      <button id="adminSubmit" type="submit">Sign In</button>
+    </form>
+    <a class="back" href="auth-updated.html">Back to client sign in</a>
+  </main>
+  <script type="module" src="./assets/js/admin-login.js"></script>
+</body>
+</html>

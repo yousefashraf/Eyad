@@ -76,6 +76,7 @@ export async function initDb() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'client',
       full_name TEXT NOT NULL,
       phone_country TEXT,
       phone TEXT,
@@ -94,9 +95,21 @@ export async function initDb() {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS otp_challenges (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      phone_e164 TEXT NOT NULL,
+      purpose TEXT NOT NULL,
+      code_hash TEXT NOT NULL,
+      payload TEXT,
+      expires_at INTEGER NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
     CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
+    CREATE INDEX IF NOT EXISTS idx_otp_challenges_phone ON otp_challenges(phone_e164, purpose);
 
     CREATE TABLE IF NOT EXISTS user_form_assignments (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -139,6 +152,18 @@ export async function initDb() {
     CREATE INDEX IF NOT EXISTS idx_submissions_assignment ON assignment_submissions(assignment_key);
     CREATE INDEX IF NOT EXISTS idx_submissions_user_assignment ON assignment_submissions(user_id, assignment_key);
   `);
+
+  const userColumns = raw.exec('PRAGMA table_info(users)')[0]?.values || [];
+  if (!userColumns.some((column) => column[1] === 'phone_e164')) {
+    raw.exec('ALTER TABLE users ADD COLUMN phone_e164 TEXT');
+    persist();
+  }
+  if (!userColumns.some((column) => column[1] === 'role')) {
+    raw.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'client'");
+    persist();
+  }
+  raw.run("UPDATE users SET role = 'admin' WHERE lower(email) = 'eyad.bassem98@hotmail.com'");
+  persist();
 }
 
 export function getDb() {

@@ -147,6 +147,9 @@ body {
   color: var(--white); font-family: 'Cormorant Garamond', serif; font-size: 19px;
 }
 .input-wrap input::placeholder { color: var(--gray-dim); }
+.otp-step { display: none; }
+.otp-step.active { display: block; animation: fadeUp 0.35s ease-out both; }
+.otp-note { color: var(--gray); font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; margin: -8px 0 18px; }
 
 .pw-toggle {
   background: none; border: none; cursor: pointer; padding: 0 16px; color: var(--gray);
@@ -347,23 +350,18 @@ footer .brand { color: var(--gold); }
     <div class="panel active" id="panel-signin">
       <form id="signinForm" novalidate>
         <div class="field">
-          <label class="field-label">Email Address</label>
-          <div class="input-wrap"><input id="signinEmail" type="email" name="email" placeholder="you@email.com" autocomplete="username"></div>
+          <label class="field-label">WhatsApp Number</label>
+          <div class="phone-field"><div class="input-wrap cc-wrap"><select name="phoneCountry"><option value="+20" selected>EG +20</option><option value="+1">US +1</option><option value="+44">UK +44</option><option value="+971">AE +971</option><option value="+966">SA +966</option></select></div><div class="input-wrap phone-wrap"><input id="signinPhone" type="tel" name="phone" placeholder="10 123 4567" inputmode="tel" autocomplete="tel"></div></div>
         </div>
         <div class="field">
           <label class="field-label">Password</label>
-          <div class="input-wrap">
-            <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" id="signinPw">
-            <button type="button" class="pw-toggle" data-toggle="signinPw" aria-label="Show password">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
+          <div class="input-wrap"><input id="signinPassword" type="password" name="password" placeholder="Enter your password" autocomplete="current-password"><button type="button" class="pw-toggle" data-toggle="signinPassword" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
         </div>
         <div class="field-row">
           <label class="checkbox-line" id="rememberLine"><span class="box"></span><span>Remember me</span></label>
-          <button type="button" class="link-gold" id="forgotBtn">Forgot Password?</button>
+          <button type="button" class="link-gold" id="forgotBtn">Need help?</button>
         </div>
-        <p class="err-msg" id="signinErr">Please enter a valid email and password.</p>
+        <p class="err-msg" id="signinErr">Please enter your WhatsApp number and password.</p>
         <button type="submit" class="submit-btn" id="signinSubmit">Sign In</button>
       </form>
       <div class="divider-or">or</div>
@@ -378,11 +376,11 @@ footer .brand { color: var(--gold); }
           <div class="input-wrap"><input id="signupName" type="text" name="fullName" placeholder="Enter your full name" autocomplete="name"></div>
         </div>
         <div class="field">
-          <label class="field-label">Email Address</label>
+          <label class="field-label">Email Address <span style="color:var(--gray);font-weight:400;">(optional)</span></label>
           <div class="input-wrap"><input id="signupEmail" type="email" name="email" placeholder="you@email.com" autocomplete="email"></div>
         </div>
         <div class="field">
-          <label class="field-label">Phone Number</label>
+          <label class="field-label">WhatsApp Number</label>
           <div class="phone-field">
             <div class="input-wrap cc-wrap">
               <select name="phoneCountry">
@@ -429,23 +427,11 @@ footer .brand { color: var(--gold); }
         </div>
         <div class="field">
           <label class="field-label">Password</label>
-          <div class="input-wrap">
-            <input type="password" name="password" placeholder="Create a password" autocomplete="new-password" id="signupPw">
-            <button type="button" class="pw-toggle" data-toggle="signupPw" aria-label="Show password">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-          <div class="pw-strength" id="pwStrength"><i></i><i></i><i></i><i></i></div>
-          <span class="pw-strength-label" id="pwStrengthLabel">Password strength</span>
+          <div class="input-wrap"><input id="signupPassword" type="password" name="password" placeholder="Create a password" autocomplete="new-password"><button type="button" class="pw-toggle" data-toggle="signupPassword" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
         </div>
         <div class="field">
           <label class="field-label">Confirm Password</label>
-          <div class="input-wrap">
-            <input type="password" name="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password" id="confirmPw">
-            <button type="button" class="pw-toggle" data-toggle="confirmPw" aria-label="Show password">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
+          <div class="input-wrap"><input id="confirmPassword" type="password" name="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password"><button type="button" class="pw-toggle" data-toggle="confirmPassword" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
         </div>
         <div class="field-row" style="margin-top:4px;">
           <label class="checkbox-line" id="termsLine"><span class="box"></span><span>I agree to the <a href="#" onclick="return false;">Terms</a> &amp; <a href="#" onclick="return false;">Privacy Policy</a></span></label>
@@ -519,26 +505,6 @@ document.querySelectorAll('.pill-group').forEach(group => {
 // ===== Checkbox lines (remember me / terms) =====
 document.querySelectorAll('.checkbox-line').forEach(line => {
   line.addEventListener('click', () => line.classList.toggle('checked'));
-});
-
-// ===== Password strength meter =====
-const pwInput = document.getElementById('signupPw');
-const strengthBars = document.querySelectorAll('#pwStrength i');
-const strengthLabel = document.getElementById('pwStrengthLabel');
-const strengthColors = ['#b8664f', '#c98a4c', '#c9a84c', '#7a9b7e'];
-const strengthWords = ['Weak', 'Fair', 'Good', 'Strong'];
-
-pwInput.addEventListener('input', () => {
-  const val = pwInput.value;
-  let score = 0;
-  if (val.length >= 8) score++;
-  if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
-  if (/[0-9]/.test(val)) score++;
-  if (/[^A-Za-z0-9]/.test(val)) score++;
-  strengthBars.forEach((bar, i) => {
-    bar.style.background = (val.length && i < Math.max(score, 1)) ? strengthColors[Math.max(score,1) - 1] : 'var(--border-light)';
-  });
-  strengthLabel.textContent = val.length ? strengthWords[Math.max(score, 1) - 1] : 'Password strength';
 });
 
 // ===== Forgot password =====

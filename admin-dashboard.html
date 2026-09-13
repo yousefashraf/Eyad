@@ -227,6 +227,18 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+    .form-status-badge-small strong,
+    .form-status-badge-small span {
+      display: block;
+    }
+    .form-status-badge-small strong {
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+    }
+    .form-status-badge-small span {
+      opacity: 0.85;
+      font-size: 9px;
+    }
     .form-status-badge-small:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -619,7 +631,8 @@
         
         const statusHtml = formEntries.map(([key, form]) => {
           const badge = form.status === 'submitted' ? 'submitted' : form.status === 'sent' ? 'sent' : 'not-assigned';
-          return `<span class="form-status-badge-small ${badge}" data-user-id="${user.id}" data-assignment-key="${key}" title="Click to send invite">${form.status}</span>`;
+          const formLabel = ASSIGNMENT_LABELS[key] || key.replace(/-/g, ' ');
+          return `<span class="form-status-badge-small ${badge}" data-user-id="${user.id}" data-assignment-key="${key}" title="Click to send invite"><strong>${formLabel}</strong><span>${form.status}</span></span>`;
         }).join('');
 
         const buttonHtml = unassigned.length > 0 
@@ -789,6 +802,10 @@
         const res = await fetch('/api/admin/dashboard', { credentials: 'same-origin' });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            window.location.href = 'admin-login.html';
+            return;
+          }
           throw new Error(data.error || 'Could not load admin dashboard.');
         }
         allUsers = data.users || [];
@@ -807,6 +824,7 @@
       if (!pendingInvite) return;
       
       const keys = pendingInvite.assignmentKeys || [pendingInvite.assignmentKey];
+      const user = pendingInvite.user;
       closeInviteModal();
 
       for (const key of keys) {
@@ -815,7 +833,7 @@
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: pendingInvite.user.id, assignmentKey: key }),
+            body: JSON.stringify({ userId: user.id, assignmentKey: key }),
           });
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || 'Could not send invite');

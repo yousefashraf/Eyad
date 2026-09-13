@@ -21,83 +21,98 @@ function showError(el, btn, message) {
   setTimeout(() => btn.classList.remove('shake'), 400);
 }
 
-signinForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const email = (fd.get('email') || '').trim();
-  const password = (fd.get('password') || '').trim();
-  const remember = document.getElementById('rememberLine').classList.contains('checked');
-  const err = document.getElementById('signinErr');
-  const btn = document.getElementById('signinSubmit');
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function phoneFrom(data) {
+  return {
+    phoneCountry: String(data.get('phoneCountry') || ''),
+    phone: String(data.get('phone') || '').trim(),
+  };
+}
 
-  if (!emailOk || password.length < 1) {
-    showError(err, btn, 'Please enter a valid email and password.');
-    document.getElementById(emailOk ? 'signinPw' : 'signinEmail').focus();
+function validPhone(phone) {
+  return /^\d[\d\s-]{5,14}$/.test(phone);
+}
+
+signinForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const data = new FormData(signinForm);
+  const phone = phoneFrom(data);
+  const password = String(data.get('password') || '');
+  const err = document.getElementById('signinErr');
+  const button = document.getElementById('signinSubmit');
+  const remember = document.getElementById('rememberLine').classList.contains('checked');
+
+  if (!validPhone(phone.phone) || password.length < 1) {
+    showError(err, button, 'Please enter your WhatsApp number and password.');
+    if (!validPhone(phone.phone)) document.getElementById('signinPhone').focus();
+    else document.getElementById('signinPassword').focus();
     return;
   }
 
   err.classList.remove('show');
-  btn.disabled = true;
+  button.disabled = true;
   try {
-    const user = await login({ email, password, remember });
+    const user = await login({ ...phone, password, remember });
     const first = (user.fullName || '').split(' ')[0] || 'there';
     showThanks('Welcome Back', `You're in, ${first}. Taking you to your program.`);
     setTimeout(() => { window.location.href = 'nutrition-assessment-updated.html'; }, 1400);
   } catch (ex) {
-    showError(err, btn, ex.message || 'Could not sign in.');
-    btn.disabled = false;
+    showError(err, button, ex.message || 'Could not sign in.');
+  } finally {
+    button.disabled = false;
   }
 });
 
-signupForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const fullName = (fd.get('fullName') || '').trim();
-  const email = (fd.get('email') || '').trim();
-  const phoneCountry = (fd.get('phoneCountry') || '').trim();
-  const phone = (fd.get('phone') || '').trim();
-  const dob = (fd.get('dob') || '').trim();
-  const gender = getPillValue(document.getElementById('signupGender'));
-  const address = (fd.get('address') || '').trim();
-  const height = (fd.get('height') || '').trim();
-  const weight = (fd.get('weight') || '').trim();
-  const password = (fd.get('password') || '').trim();
-  const confirmPassword = (fd.get('confirmPassword') || '').trim();
-  const termsChecked = document.getElementById('termsLine').classList.contains('checked');
+signupForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const data = new FormData(signupForm);
+  const phone = phoneFrom(data);
+  const fullName = String(data.get('fullName') || '').trim();
+  const email = String(data.get('email') || '').trim();
+  const password = String(data.get('password') || '');
+  const confirmPassword = String(data.get('confirmPassword') || '');
   const err = document.getElementById('signupErr');
-  const btn = document.getElementById('signupSubmit');
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const button = document.getElementById('signupSubmit');
+  const termsChecked = document.getElementById('termsLine').classList.contains('checked');
+  const required = ['dob', 'address', 'height', 'weight'];
 
   let message = 'Please complete all fields correctly.';
-  let valid = true;
+  if (!fullName || !validPhone(phone.phone) || !required.every((field) => String(data.get(field) || '').trim()) || !getPillValue(document.getElementById('signupGender'))) {
+    message = 'Please complete all profile fields correctly.';
+  } else if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    message = 'Enter a valid email address or leave it blank.';
+  } else if (password.length < 8) {
+    message = 'Password must be at least 8 characters.';
+  } else if (password !== confirmPassword) {
+    message = 'Passwords do not match.';
+  } else if (!termsChecked) {
+    message = 'Please agree to the Terms & Privacy Policy.';
+  }
 
-  if (!fullName || !emailOk || !phone || !dob || !gender || !address || !height || !weight || password.length < 8) valid = false;
-  if (password !== confirmPassword) { valid = false; message = 'Passwords do not match.'; }
-  if (!termsChecked) { valid = false; message = 'Please agree to the Terms & Privacy Policy.'; }
-
-  if (!valid) {
-    showError(err, btn, message);
-    const firstInvalid = [
-      ['signupName', fullName], ['signupEmail', emailOk], ['signupPhone', phone],
-      ['signupDob', dob], ['signupAddress', address], ['signupHeight', height],
-      ['signupWeight', weight], ['signupPw', password.length >= 8], ['confirmPw', password === confirmPassword]
-    ].find((pair) => !pair[1]);
-    if (firstInvalid) document.getElementById(firstInvalid[0]).focus();
+  if (message !== 'Please complete all fields correctly.' || !fullName || !validPhone(phone.phone) || !required.every((field) => String(data.get(field) || '').trim()) || !getPillValue(document.getElementById('signupGender'))) {
+    showError(err, button, message);
     return;
   }
 
   err.classList.remove('show');
-  btn.disabled = true;
+  button.disabled = true;
   try {
     const user = await register({
-      fullName, email, phoneCountry, phone, dob, gender, address, height, weight, password,
+      ...phone,
+      fullName,
+      email,
+      dob: String(data.get('dob') || '').trim(),
+      gender: getPillValue(document.getElementById('signupGender')),
+      address: String(data.get('address') || '').trim(),
+      height: String(data.get('height') || '').trim(),
+      weight: String(data.get('weight') || '').trim(),
+      password,
     });
     const first = (user.fullName || fullName).split(' ')[0];
     showThanks('Account Created', `Welcome, ${first}. Taking you to your nutrition assessment now.`);
     setTimeout(() => { window.location.href = 'nutrition-assessment-updated.html'; }, 1800);
   } catch (ex) {
-    showError(err, btn, ex.message || 'Could not create the account.');
-    btn.disabled = false;
+    showError(err, button, ex.message || 'Could not create the account.');
+  } finally {
+    button.disabled = false;
   }
 });
