@@ -163,7 +163,7 @@ footer .brand { color: var(--gold); }
         <div class="conditional" id="walkRunBox">
           <div class="row-2">
             <div class="field"><label class="field-label">Average distance per session</label><div class="input-wrap"><input type="number" step="0.1" name="avgDistance"><span class="unit">km</span></div></div>
-            <div class="field"><label class="field-label">Average pace per km</label><div class="input-wrap"><input type="text" name="avgPace" placeholder="mm:ss"><span class="unit">min/km</span></div></div>
+            <div class="field"><label class="field-label">Average pace per km</label><div class="input-wrap"><input type="text" name="avgPace" placeholder="mm:ss" inputmode="numeric" pattern="[0-9:]*" maxlength="5" autocomplete="off" aria-label="Average pace per km"><span class="unit">min/km</span></div></div>
           </div>
         </div>
       </div>

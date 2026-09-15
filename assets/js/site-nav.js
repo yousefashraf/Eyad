@@ -218,7 +218,7 @@ import { getCurrentUser, logout } from './auth-api.js';
     if (!wrap) return;
     const unread = notifications.filter((note) => !note.isRead);
     if (!unread.length) {
-      wrap.innerHTML = '<span class="nav-notice-empty">✓ All caught up</span>';
+    //   wrap.innerHTML = '<span class="nav-notice-empty">✓ All caught up</span>';
       return;
     }
 

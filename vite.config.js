@@ -51,6 +51,9 @@ function copyStaticAssets() {
         'Nutrition plan - Sample A.pdf',
         'Nutrition plan - Sample B.pdf',
         'Nutrition plan - Sample C.pdf',
+        'Hybrid Training Program – Intermediate Edition.pdf',
+        'Hybrid training program (ultimate).pdf',
+        'Hyrox prep training program– Semi Edition.pdf',
       ]) {
         this.emitFile({
           type: 'asset',
