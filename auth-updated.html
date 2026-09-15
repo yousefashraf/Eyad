@@ -176,6 +176,12 @@ body {
 
 /* two-up row layout */
 .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.dob-fields { display: grid; grid-template-columns: 0.9fr 1.3fr 1.1fr; gap: 10px; width: 100%; }
+.dob-fields .input-wrap { min-width: 0; height: 66px; }
+.dob-fields select { width: 100%; height: 100%; padding: 0 10px; background: transparent; border: none; outline: none; color: var(--white); font-family: 'Cormorant Garamond', serif; font-size: 17px; appearance: none; cursor: pointer; }
+.dob-fields select option { background: var(--bg-alt); color: var(--white); }
+.signup-gender { min-height: 66px; gap: 12px; }
+.signup-gender .pill { flex: 1; min-height: 66px; display: flex; align-items: center; justify-content: center; padding: 12px 14px; }
 
 /* single-select pill (gender) */
 .pill-group { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -436,11 +442,16 @@ footer .brand { color: var(--gold); }
         <div class="row-2">
           <div class="field">
             <label class="field-label">Date of Birth</label>
-            <div class="input-wrap"><input id="signupDob" type="date" name="dob"></div>
+            <div class="dob-fields" id="signupDobFields">
+              <div class="input-wrap"><select id="signupDobDay" aria-label="Birth day"><option value="">Day</option></select></div>
+              <div class="input-wrap"><select id="signupDobMonth" aria-label="Birth month"><option value="">Month</option></select></div>
+              <div class="input-wrap"><select id="signupDobYear" aria-label="Birth year"><option value="">Year</option></select></div>
+            </div>
+            <input id="signupDob" type="hidden" name="dob">
           </div>
           <div class="field">
             <label class="field-label">Gender</label>
-            <div class="pill-group" data-group="gender" id="signupGender">
+            <div class="pill-group signup-gender" data-group="gender" id="signupGender">
               <div class="pill" data-value="Male">Male</div>
               <div class="pill" data-value="Female">Female</div>
             </div>
@@ -541,6 +552,38 @@ document.querySelectorAll('.pill-group').forEach(group => {
 document.querySelectorAll('.checkbox-line').forEach(line => {
   line.addEventListener('click', () => line.classList.toggle('checked'));
 });
+
+// ===== Date of birth selectors =====
+const dobDay = document.getElementById('signupDobDay');
+const dobMonth = document.getElementById('signupDobMonth');
+const dobYear = document.getElementById('signupDobYear');
+const dobValue = document.getElementById('signupDob');
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const currentYear = new Date().getFullYear();
+
+for (let day = 1; day <= 31; day += 1) {
+  dobDay.add(new Option(String(day), String(day).padStart(2, '0')));
+}
+monthNames.forEach((month, index) => dobMonth.add(new Option(month, String(index + 1).padStart(2, '0'))));
+for (let year = currentYear; year >= currentYear - 100; year -= 1) {
+  dobYear.add(new Option(String(year), String(year)));
+}
+
+function updateDobValue() {
+  const day = Number(dobDay.value);
+  const month = Number(dobMonth.value);
+  const year = Number(dobYear.value);
+  if (!day || !month || !year) {
+    dobValue.value = '';
+    return;
+  }
+  const date = new Date(year, month - 1, day);
+  dobValue.value = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+    ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    : '';
+}
+
+[dobDay, dobMonth, dobYear].forEach(select => select.addEventListener('change', updateDobValue));
 
 // ===== Forgot password =====
 document.getElementById('forgotBtn').addEventListener('click', () => {
