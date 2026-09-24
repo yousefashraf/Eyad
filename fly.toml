@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for eyad on 2026-09-24T20:32:09Z
+# fly.toml app configuration file generated for eyad on 2026-09-24T20:38:03Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'eyad'
-primary_region = 'ams'
+primary_region = 'fra'
 
 [build]
 
