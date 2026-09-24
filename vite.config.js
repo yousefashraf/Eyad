@@ -45,6 +45,9 @@ function copyStaticAssets() {
         }
       }
       for (const file of [
+        'logo.png',
+        'logo.jpeg',
+        'logo-icon.svg',
         'ISSA-Certified-Personal-Trainer-Certification.pdf',
         'ISSA-Nutritionist-Certification.pdf',
         'ISSA-Strength-and-Conditioning-Certification.pdf',
