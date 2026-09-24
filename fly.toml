@@ -24,3 +24,7 @@ primary_region = 'fra'
 
 [env]
   VITE_HMR_HOST = "eyad.fly.dev"
+
+[mounts]
+  source = "eyad_data"
+  destination = "/app/data"
