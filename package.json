@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "reset-admin-password": "node server/reset-admin-password.js"
+    "reset-admin-password": "node server/reset-admin-password.js",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
