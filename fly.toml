@@ -21,3 +21,6 @@ primary_region = 'fra'
   cpu_kind = 'shared'
   cpus = 1
   memory_mb = 256
+
+[env]
+  VITE_HMR_HOST = "eyad.fly.dev"
