@@ -34,7 +34,7 @@ function copyStaticAssets() {
   return {
     name: 'copy-static-assets',
     async generateBundle() {
-      for (const directory of ['transformation', 'certificates']) {
+      for (const directory of ['transformation', 'certificates', 'assets/images/certificates']) {
         const files = await collectFiles(resolve(rootDir, directory));
         for (const file of files) {
           this.emitFile({
