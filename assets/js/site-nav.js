@@ -52,6 +52,7 @@ import { getCurrentUser, logout } from './auth-api.js';
         position: absolute;
         right: 0;
         top: calc(100% + 12px);
+        display: none;
         width: 320px;
         background: #1a1a1a;
         border: 1px solid rgba(255,255,255,0.1);
@@ -61,6 +62,7 @@ import { getCurrentUser, logout } from './auth-api.js';
         padding: 0;
         overflow: hidden;
       }
+      .nav-notifications-wrap.open .nav-notification-list { display: block; }
       .nav-notification-header {
         padding: 12px 14px;
         background: rgba(201,168,76,0.08);
@@ -155,8 +157,8 @@ import { getCurrentUser, logout } from './auth-api.js';
         </div>
       </div>
     </div>
-    <div class="nav-notifications-wrap" id="navNotificationsWrap" aria-live="polite"></div>
     <a href="${prefix}auth-updated.html" class="nav-cta" data-nav="start">Start Now</a>
+    <div class="nav-notifications-wrap" id="navNotificationsWrap" aria-live="polite"></div>
     <button type="button" class="hamburger" aria-label="Open navigation menu" aria-expanded="false">
       <span></span>
       <span></span>
@@ -240,6 +242,11 @@ import { getCurrentUser, logout } from './auth-api.js';
       </div>
     `;
 
+    wrap.querySelector('.nav-notification-badge').addEventListener('click', (event) => {
+      event.stopPropagation();
+      wrap.classList.toggle('open');
+    });
+
     wrap.querySelectorAll('[data-note-id]').forEach((item) => {
       item.addEventListener('click', async () => {
         const id = Number(item.dataset.noteId);
@@ -252,6 +259,10 @@ import { getCurrentUser, logout } from './auth-api.js';
       });
     });
   }
+
+  document.addEventListener('click', () => {
+    document.getElementById('navNotificationsWrap')?.classList.remove('open');
+  });
 
   async function loadNotifications() {
     try {
@@ -275,6 +286,10 @@ import { getCurrentUser, logout } from './auth-api.js';
       <span class="nav-user">Hi, ${first}</span>
       <button type="button" class="nav-cta" data-nav="start">Sign&nbsp;Out</button>
     `;
+    const notificationWrap = nav.querySelector('#navNotificationsWrap');
+    if (notificationWrap) {
+      wrap.insertBefore(notificationWrap, wrap.querySelector('.nav-cta'));
+    }
     cta.replaceWith(wrap);
     wrap.querySelector('.nav-cta').addEventListener('click', async () => {
       await logout();
