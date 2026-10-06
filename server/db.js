@@ -175,6 +175,11 @@ export async function initDb() {
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS app_migrations (
+      name TEXT PRIMARY KEY,
+      applied_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_user_form_assignments_user ON user_form_assignments(user_id);
     CREATE INDEX IF NOT EXISTS idx_user_form_assignments_key ON user_form_assignments(assignment_key);
     CREATE INDEX IF NOT EXISTS idx_user_form_assignments_user_key ON user_form_assignments(user_id, assignment_key);
@@ -214,6 +219,35 @@ export async function initDb() {
         JSON.stringify(item.images),
       ]);
     }
+    persist();
+  }
+  const defaultsMigration = 'import-original-transformations-2026-10';
+  const defaultsMigrationApplied = raw.exec(
+    `SELECT COUNT(*) FROM app_migrations WHERE name = '${defaultsMigration}'`,
+  )[0].values[0][0];
+  if (!defaultsMigrationApplied) {
+    const existingNames = new Set(
+      raw.exec('SELECT name FROM transformations')[0]?.values.map(([name]) => String(name).trim().toLowerCase()) || [],
+    );
+    for (const item of DEFAULT_TRANSFORMATIONS) {
+      if (existingNames.has(item.name.trim().toLowerCase())) continue;
+      raw.run(`
+        INSERT INTO transformations (
+          name, duration, type, story, muscle_start, muscle_end, fat_start, fat_end, images_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        item.name,
+        item.duration,
+        item.type,
+        item.story,
+        item.muscle[0],
+        item.muscle[1],
+        item.fat[0],
+        item.fat[1],
+        JSON.stringify(item.images),
+      ]);
+    }
+    raw.run('INSERT INTO app_migrations (name) VALUES (?)', [defaultsMigration]);
     persist();
   }
   const users = raw.exec('SELECT id, phone_country, phone, phone_e164 FROM users')[0]?.values || [];

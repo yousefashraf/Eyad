@@ -72,6 +72,10 @@ npm run reset-admin-password
 
 Remove the password from `.env` after the reset. Never commit `.env` or provider keys.
 
+### Import original transformations to production
+
+The app imports any missing original entries from `transformations-data.js` once when the updated server starts. Existing transformations are preserved, and the migration marker prevents deleted entries from being re-added on later restarts. To apply it, deploy the code through the project's normal production deployment process; no production admin-dashboard login or cookie is needed. A developer still needs the normal permission to trigger or merge a production deployment.
+
 ## Production build
 
 ```bash
