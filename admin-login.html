@@ -11,7 +11,20 @@
     body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--bg); color: var(--cream); font-family: Montserrat, sans-serif; }
     .login-card { width: min(100%, 420px); padding: 44px 38px; border: 1px solid var(--line); background: var(--panel); }
     .brand { text-align: center; margin-bottom: 36px; }
-    .brand-mark { color: var(--gold); font: italic 36px 'Playfair Display', serif; }
+    .brand-mark {
+      width: 190px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(201,168,76,0.12));
+    }
     .brand h1 { margin: 12px 0 8px; font-size: 18px; letter-spacing: 2.5px; text-transform: uppercase; }
     .brand p { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
     .field { margin-bottom: 20px; }
@@ -30,7 +43,9 @@
 <body>
   <main class="login-card">
     <div class="brand">
-      <div class="brand-mark">&amp;</div>
+      <div class="brand-mark">
+        <img src="./logo.png" alt="Evolved & Balanced logo" />
+      </div>
       <h1>Admin Dashboard</h1>
       <p>Private access</p>
     </div>

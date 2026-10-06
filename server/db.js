@@ -3,6 +3,7 @@ import { createRequire } from 'module';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
+import { DEFAULT_TRANSFORMATIONS } from '../transformations-data.js';
 
 const require = createRequire(import.meta.url);
 const initSqlJs = require('sql.js');
@@ -158,6 +159,21 @@ export async function initDb() {
       submitted_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS transformations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      duration TEXT NOT NULL,
+      type TEXT NOT NULL,
+      story TEXT NOT NULL,
+      muscle_start TEXT NOT NULL,
+      muscle_end TEXT NOT NULL,
+      fat_start TEXT NOT NULL,
+      fat_end TEXT NOT NULL,
+      images_json TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_user_form_assignments_user ON user_form_assignments(user_id);
     CREATE INDEX IF NOT EXISTS idx_user_form_assignments_key ON user_form_assignments(assignment_key);
     CREATE INDEX IF NOT EXISTS idx_user_form_assignments_user_key ON user_form_assignments(user_id, assignment_key);
@@ -175,6 +191,27 @@ export async function initDb() {
   }
   if (!userColumns.some((column) => column[1] === 'role')) {
     raw.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'client'");
+    persist();
+  }
+  const transformationCount = raw.exec('SELECT COUNT(*) FROM transformations')[0].values[0][0];
+  if (transformationCount === 0) {
+    for (const item of DEFAULT_TRANSFORMATIONS) {
+      raw.run(`
+        INSERT INTO transformations (
+          name, duration, type, story, muscle_start, muscle_end, fat_start, fat_end, images_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        item.name,
+        item.duration,
+        item.type,
+        item.story,
+        item.muscle[0],
+        item.muscle[1],
+        item.fat[0],
+        item.fat[1],
+        JSON.stringify(item.images),
+      ]);
+    }
     persist();
   }
   const users = raw.exec('SELECT id, phone_country, phone, phone_e164 FROM users')[0]?.values || [];

@@ -1,6 +1,36 @@
+import { randomUUID } from 'crypto';
+import { mkdir, readFile, unlink, writeFile } from 'fs/promises';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import multer from 'multer';
 import { getDb } from './db.js';
 import { getUserFromRequest, sendJson } from './auth.js';
 import { ASSIGNMENTS } from './assignments.js';
+import { normalizeTransformation, transformationFromRow } from './transformations.js';
+
+const transformationImageDirectory = fileURLToPath(new URL('../data/transformation-uploads/', import.meta.url));
+const transformationImageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 12 * 1024 * 1024, files: 1 },
+  fileFilter(_req, file, callback) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype)) {
+      callback(new Error('Upload a JPEG, PNG, or WebP image.'));
+      return;
+    }
+    callback(null, true);
+  },
+});
+
+function getTransformationImageType(buffer) {
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'jpg';
+  if (buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) return 'png';
+  if (
+    buffer.length >= 12
+    && buffer.toString('ascii', 0, 4) === 'RIFF'
+    && buffer.toString('ascii', 8, 12) === 'WEBP'
+  ) return 'webp';
+  return null;
+}
 
 function requireAdmin(req, res) {
   const user = getUserFromRequest(req);
@@ -68,6 +98,55 @@ export function buildDashboardRows(users, assignments, submissions) {
 }
 
 export function attachAdminRoutes(router) {
+  router.get('/transformation-images/:filename', async (req, res) => {
+    const match = /^([0-9a-f-]{36})\.(jpg|png|webp)$/.exec(req.params.filename);
+    if (!match) return sendJson(res, 404, { error: 'Image not found.' });
+
+    try {
+      const image = await readFile(join(transformationImageDirectory, match[0]));
+      res.setHeader('Content-Type', match[2] === 'jpg' ? 'image/jpeg' : `image/${match[2]}`);
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.statusCode = 200;
+      return res.end(image);
+    } catch (error) {
+      if (error.code === 'ENOENT') return sendJson(res, 404, { error: 'Image not found.' });
+      console.error('Could not read transformation image:', error);
+      return sendJson(res, 500, { error: 'Could not load transformation image.' });
+    }
+  });
+
+  router.get('/transformations', (_req, res) => {
+    const rows = getDb().prepare('SELECT * FROM transformations ORDER BY id ASC').all();
+    return sendJson(res, 200, { transformations: rows.map(transformationFromRow) });
+  });
+
+  router.post('/admin/transformation-images', (req, res, next) => {
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
+    transformationImageUpload.single('image')(req, res, (error) => {
+      if (!error) return next();
+      if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+        return sendJson(res, 400, { error: 'Images must be 12 MB or smaller.' });
+      }
+      return sendJson(res, 400, { error: error.message || 'Could not upload image.' });
+    });
+  }, async (req, res) => {
+    if (!req.file) return sendJson(res, 400, { error: 'Choose an image to upload.' });
+    const extension = getTransformationImageType(req.file.buffer);
+    if (!extension) return sendJson(res, 400, { error: 'The selected file is not a valid JPEG, PNG, or WebP image.' });
+
+    const filename = `${randomUUID()}.${extension}`;
+    try {
+      await mkdir(transformationImageDirectory, { recursive: true });
+      await writeFile(join(transformationImageDirectory, filename), req.file.buffer, { flag: 'wx' });
+      return sendJson(res, 201, { image: { path: `api/transformation-images/${filename}` } });
+    } catch (error) {
+      console.error('Could not save transformation image:', error);
+      return sendJson(res, 500, { error: 'Could not save transformation image.' });
+    }
+  });
+
   router.get('/notifications', (req, res) => {
     const user = getUserFromRequest(req);
     if (!user) return sendJson(res, 401, { error: 'Not signed in.' });
@@ -124,6 +203,119 @@ export function attachAdminRoutes(router) {
       submittedAt: row.submitted_at,
       payload: safeParseJson(row.payload),
     })) });
+  });
+
+  router.get('/admin/transformations', (req, res) => {
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
+    const rows = getDb().prepare('SELECT * FROM transformations ORDER BY id ASC').all();
+    return sendJson(res, 200, { transformations: rows.map(transformationFromRow) });
+  });
+
+  router.post('/admin/transformations', (req, res) => {
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
+    let transformation;
+    try {
+      transformation = normalizeTransformation(req.body);
+    } catch (error) {
+      return sendJson(res, 400, { error: error.message });
+    }
+
+    const result = getDb().prepare(`
+      INSERT INTO transformations (
+        name, duration, type, story, muscle_start, muscle_end, fat_start, fat_end, images_json
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      transformation.name,
+      transformation.duration,
+      transformation.type,
+      transformation.story,
+      transformation.muscleStart,
+      transformation.muscleEnd,
+      transformation.fatStart,
+      transformation.fatEnd,
+      JSON.stringify(transformation.images),
+    );
+    const row = getDb().prepare('SELECT * FROM transformations WHERE id = ?').get(result.lastInsertRowid);
+    return sendJson(res, 201, { transformation: transformationFromRow(row) });
+  });
+
+  router.put('/admin/transformations/:id', (req, res) => {
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) return sendJson(res, 400, { error: 'Invalid transformation.' });
+
+    let transformation;
+    try {
+      transformation = normalizeTransformation(req.body);
+    } catch (error) {
+      return sendJson(res, 400, { error: error.message });
+    }
+
+    const db = getDb();
+    const current = db.prepare('SELECT id FROM transformations WHERE id = ?').get(id);
+    if (!current) return sendJson(res, 404, { error: 'Transformation not found.' });
+
+    db.prepare(`
+      UPDATE transformations
+      SET name = ?, duration = ?, type = ?, story = ?, muscle_start = ?, muscle_end = ?,
+          fat_start = ?, fat_end = ?, images_json = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `).run(
+      transformation.name,
+      transformation.duration,
+      transformation.type,
+      transformation.story,
+      transformation.muscleStart,
+      transformation.muscleEnd,
+      transformation.fatStart,
+      transformation.fatEnd,
+      JSON.stringify(transformation.images),
+      id,
+    );
+    const row = db.prepare('SELECT * FROM transformations WHERE id = ?').get(id);
+    return sendJson(res, 200, { transformation: transformationFromRow(row) });
+  });
+
+  router.delete('/admin/transformations/:id', async (req, res) => {
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) return sendJson(res, 400, { error: 'Invalid transformation.' });
+
+    const db = getDb();
+    const current = db.prepare('SELECT images_json FROM transformations WHERE id = ?').get(id);
+    if (!current) return sendJson(res, 404, { error: 'Transformation not found.' });
+
+    db.prepare('DELETE FROM transformations WHERE id = ?').run(id);
+
+    const remainingImages = db.prepare('SELECT images_json FROM transformations').all();
+    const uploadedImagePattern = /api\/transformation-images\/([0-9a-f-]{36}\.(?:jpg|png|webp))/g;
+    const imageFilenames = new Set();
+    for (const match of current.images_json.matchAll(uploadedImagePattern)) {
+      imageFilenames.add(match[1]);
+    }
+
+    let cleanupWarning = '';
+    for (const filename of imageFilenames) {
+      if (remainingImages.some((row) => row.images_json.includes(filename))) continue;
+      try {
+        await unlink(join(transformationImageDirectory, filename));
+      } catch (error) {
+        if (error.code !== 'ENOENT') {
+          console.error(`Could not remove unused transformation image ${filename}:`, error);
+          cleanupWarning = 'Transformation deleted, but one or more unused image files could not be removed.';
+        }
+      }
+    }
+
+    return sendJson(res, 200, { ok: true, ...(cleanupWarning ? { warning: cleanupWarning } : {}) });
   });
 
   router.post('/admin/assign-form', (req, res) => {
