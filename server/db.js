@@ -83,7 +83,8 @@ export async function initDb() {
   const SQL = await initSqlJs({
     locateFile: (file) => join(rootDir, 'node_modules', 'sql.js', 'dist', file),
   });
-  const raw = existsSync(dbPath)
+  const databaseExists = existsSync(dbPath);
+  const raw = databaseExists
     ? new SQL.Database(readFileSync(dbPath))
     : new SQL.Database();
 
@@ -194,7 +195,8 @@ export async function initDb() {
     persist();
   }
   const transformationCount = raw.exec('SELECT COUNT(*) FROM transformations')[0].values[0][0];
-  if (transformationCount === 0) {
+  // An empty gallery may be intentional after an admin deletes its final entry.
+  if (!databaseExists && transformationCount === 0) {
     for (const item of DEFAULT_TRANSFORMATIONS) {
       raw.run(`
         INSERT INTO transformations (
