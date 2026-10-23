@@ -378,8 +378,6 @@ document.getElementById('exerciseForm').addEventListener('submit', async functio
 
   const saved = await window.EBForms.saveFormAssignment(this, 'exercise-history', lines.join('\n'));
   if (!saved) return;
-
-  document.getElementById('thanksOverlay').classList.add('active');
 });
 document.getElementById('thanksClose').addEventListener('click', () => document.getElementById('thanksOverlay').classList.remove('active'));
 </script>

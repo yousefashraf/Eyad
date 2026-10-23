@@ -75,6 +75,72 @@
     if (copy) copy.textContent = thanksCopy.copy;
   }
 
+  const assignmentKeys = {
+    'nutrition-assessment-updated.html': 'nutrition-assessment',
+    'dietary-log.html': 'dietary-log',
+    'exercise-history.html': 'exercise-history',
+    'food-preferences.html': 'food-preferences',
+    'health-history.html': 'health-history',
+  };
+
+  function formatSubmissionDate(value) {
+    if (!value) return '';
+    const normalized = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+      ? value
+      : `${value.replace(' ', 'T')}Z`;
+    const date = new Date(normalized);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function setFormStatus(banner, submission) {
+    const date = formatSubmissionDate(submission && submission.submittedAt);
+    banner.dataset.status = submission ? 'submitted' : 'pending';
+    banner.hidden = !submission;
+    banner.textContent = submission
+      ? `Form status: Submitted${date ? ` on ${date}` : ''}`
+      : 'Form status: Not submitted yet';
+  }
+
+  let formStatusUpdated = false;
+
+  function initializeFormStatus() {
+    const hero = document.querySelector('.hero');
+    const assignmentKey = assignmentKeys[window.location.pathname.split('/').pop()];
+    if (!hero || !assignmentKey) return null;
+
+    const banner = document.createElement('div');
+    banner.className = 'form-status-banner';
+    banner.dataset.status = 'loading';
+    banner.setAttribute('role', 'status');
+    banner.setAttribute('aria-live', 'polite');
+    banner.hidden = true;
+    banner.textContent = 'Checking form status...';
+    hero.insertBefore(banner, hero.firstChild);
+
+    fetch('/api/assignments', { credentials: 'same-origin' })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          if (response.status === 401) return;
+          throw new Error(data.error || 'Could not load form status.');
+        }
+
+        const submission = (data.submissions || [])
+          .find((item) => item.assignmentKey === assignmentKey);
+        if (!formStatusUpdated) setFormStatus(banner, submission);
+      })
+      .catch((error) => {
+        console.error('Could not load form status:', error);
+        if (!formStatusUpdated) {
+          banner.dataset.status = 'error';
+          banner.textContent = 'Form status could not be loaded.';
+        }
+      });
+
+    return banner;
+  }
+
   function showSaveError(message) {
     snapshotThanks();
     const overlay = document.getElementById('thanksOverlay');
@@ -88,12 +154,16 @@
 
   async function saveFormAssignment(form, assignmentKey, summary) {
     try {
-      await saveAssignment({
+      const submission = await saveAssignment({
         assignmentKey,
         payload: collectFormAnswers(form),
         summary,
       });
       restoreThanks();
+      if (submission && formStatusBanner) {
+        formStatusUpdated = true;
+        setFormStatus(formStatusBanner, submission);
+      }
       return true;
     } catch (err) {
       const message = err.status === 401
@@ -103,6 +173,8 @@
       return false;
     }
   }
+
+  const formStatusBanner = initializeFormStatus();
 
   window.EBForms = {
     collectFormAnswers,

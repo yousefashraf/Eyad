@@ -665,8 +665,6 @@ document.getElementById('prefsForm').addEventListener('submit', async function(e
 
   const saved = await window.EBForms.saveFormAssignment(this, 'food-preferences', lines.join('\n'));
   if (!saved) return;
-
-  document.getElementById('thanksOverlay').classList.add('active');
 });
 document.getElementById('thanksClose').addEventListener('click', () => document.getElementById('thanksOverlay').classList.remove('active'));
 </script>

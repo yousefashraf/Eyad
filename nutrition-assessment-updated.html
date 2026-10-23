@@ -865,8 +865,6 @@ document.getElementById('assessmentForm').addEventListener('submit', async funct
 
   const saved = await window.EBForms.saveFormAssignment(this, 'nutrition-assessment', lines.join('\n'));
   if (!saved) return;
-
-  document.getElementById('thanksOverlay').classList.add('active');
 });
 
 document.getElementById('thanksOverlay').addEventListener('click', function(e) {

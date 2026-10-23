@@ -357,8 +357,6 @@ document.getElementById('logForm').addEventListener('submit', async function(e) 
 
   const saved = await window.EBForms.saveFormAssignment(this, 'dietary-log', lines.join('\n'));
   if (!saved) return;
-
-  document.getElementById('thanksOverlay').classList.add('active');
 });
 document.getElementById('thanksClose').addEventListener('click', () => document.getElementById('thanksOverlay').classList.remove('active'));
 </script>

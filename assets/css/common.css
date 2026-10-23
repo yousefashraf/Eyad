@@ -50,6 +50,23 @@ body {
 #navbar.site-nav .hamburger { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 5px; width: 36px; height: 36px; padding: 0; border: 0; background: transparent; cursor: pointer; }
 #navbar.site-nav .hamburger span { width: 24px; height: 1.5px; background: var(--gold); }
 
+.form-status-banner {
+  width: min(100%, 680px);
+  margin: 24px auto;
+  padding: 14px 18px;
+  border: 1px solid var(--border-light);
+  background: rgba(255,255,255,0.025);
+  color: var(--cream-soft);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  line-height: 1.6;
+  text-align: center;
+  text-transform: uppercase;
+}
+.form-status-banner[data-status="submitted"] { border-color: rgba(201,168,76,0.45); color: var(--gold-bright); }
+.form-status-banner[data-status="error"] { border-color: rgba(189,110,90,0.55); color: #d99a89; }
+
 .page-nav { display: flex; align-items: center; justify-content: flex-end; gap: 16px; margin-left: auto; margin-right: 28px; flex-wrap: wrap; }
 .page-nav a { color: var(--gray); font-size: 10px; font-weight: 600; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; transition: color 0.25s; }
 .page-nav a:hover, .page-nav a.active { color: var(--gold); }
@@ -158,6 +175,7 @@ footer .brand { color: var(--gold); }
   .top-bar { padding: 4px 20px; }
   .hero { padding: 70px 20px 50px; }
   .form-shell { padding: 40px 16px 70px; }
+  .form-status-banner { margin-bottom: 20px; padding: 12px 14px; font-size: 10px; }
   .row-2, .row-3, .chip-grid { grid-template-columns: 1fr; }
   .section-body { padding: 26px 18px; }
   .progress-wrap { top: 73px; }
