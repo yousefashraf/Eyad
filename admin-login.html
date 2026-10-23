@@ -12,7 +12,8 @@
     .login-card { width: min(100%, 420px); padding: 44px 38px; border: 1px solid var(--line); background: var(--panel); }
     .brand { text-align: center; margin-bottom: 36px; }
     .brand-mark {
-      width: 190px;
+      width: 90px;
+      height: 90px;
       margin: 0 auto 12px;
       display: flex;
       align-items: center;
@@ -20,8 +21,8 @@
     }
     .brand-mark img {
       display: block;
-      width: 100%;
-      height: auto;
+      width: 90px;
+      height: 90px;
       object-fit: contain;
       filter: drop-shadow(0 0 10px rgba(201,168,76,0.12));
     }
@@ -37,6 +38,9 @@
     button:disabled { cursor: wait; opacity: 0.65; }
     .back { display: block; margin-top: 24px; color: var(--muted); text-align: center; font-size: 11px; text-decoration: none; }
     .back:hover { color: var(--gold); }
+    @media (max-width: 968px) {
+      .brand-mark, .brand-mark img { width: 62px; height: 62px; }
+    }
     @media (max-width: 480px) { .login-card { padding: 36px 24px; } }
   </style>
 </head>

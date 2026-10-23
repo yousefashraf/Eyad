@@ -10,9 +10,10 @@
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body { margin:0; min-height:100vh; background:var(--bg); color:var(--cream); font-family:Montserrat,sans-serif; }
-.topbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:4px 40px; min-height:89px; background:rgba(10,10,10,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(18px); }
+.topbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:4px 40px; min-height:98px; background:rgba(10,10,10,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(18px); }
 .brand { display:flex; align-items:center; gap:12px; }
-.brand-mark { display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--gold); border-radius:50%; color:var(--gold); font:italic 26px 'Playfair Display',serif; }
+.brand-mark { display:flex; align-items:center; justify-content:center; width:90px; height:90px; flex:0 0 90px; }
+.brand-mark img { display:block; width:90px; height:90px; object-fit:contain; }
 .brand-name { color:var(--white); font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
 .top-actions { display:flex; gap:10px; }
 .top-actions a { padding:10px 14px; border:1px solid var(--line-strong); color:var(--soft); font-size:10px; font-weight:600; letter-spacing:1px; text-decoration:none; text-transform:uppercase; }
@@ -38,12 +39,13 @@ h1 { margin:8px 0 18px; color:var(--white); font-size:clamp(30px,5vw,46px); font
 .summary strong { display:block; margin-bottom:6px; color:var(--gold); font:600 10px Montserrat,sans-serif; letter-spacing:1.5px; text-transform:uppercase; }
 .state { padding:70px 24px; text-align:center; color:var(--muted); }
 .error { color:#d99a89; }
-@media (max-width:620px) { .topbar { padding:12px 18px; min-height:70px; } .brand-name { font-size:10px; } .top-actions a { padding:9px 10px; } .hero { padding:70px 20px 50px; } .form-shell { padding:40px 16px 70px; } .section-bar { padding:16px 18px; } .section-body { padding:30px 20px 26px; } }
+@media (max-width:968px) { .topbar { min-height:70px; } .brand-mark, .brand-mark img { width:62px; height:62px; } .brand-mark { flex-basis:62px; } }
+@media (max-width:620px) { .topbar { padding:12px 18px; min-height:82px; } .brand-name { font-size:10px; } .top-actions a { padding:9px 10px; } .hero { padding:70px 20px 50px; } .form-shell { padding:40px 16px 70px; } .section-bar { padding:16px 18px; } .section-body { padding:30px 20px 26px; } }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><div class="brand-mark">&amp;</div><div class="brand-name">Evolved &amp; Balanced</div></div>
+  <div class="brand"><div class="brand-mark"><img src="./logo.png" alt="Evolved &amp; Balanced logo"></div><div class="brand-name">Evolved &amp; Balanced</div></div>
   <div class="top-actions"><a href="admin-dashboard.html">Back to Dashboard</a><a href="#" id="logoutLink">Sign Out</a></div>
 </header>
 <section class="hero">
